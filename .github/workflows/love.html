@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Soso Loves Jojo</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: pink;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+    #gameArea {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      background: linear-gradient(to top, #ffcccc, #ffe6e6);
+    }
+    .character {
+      position: absolute;
+      width: 300px;
+      height: 200px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .character img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #speech {
+      position: absolute;
+      top: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 24px;
+      color: darkred;
+      font-weight: bold;
+    }
+    #message {
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      text-align: center;
+      font-size: 30px;
+      color: red;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="gameArea">
+    <div id="soso" class="character">
+      <img src="https://raw.githubusercontent.com/gitlearnaman/iamamanraj-/main/soso.png" alt="Soso">
+    </div>
+    <div id="jojo" class="character">
+      <img src="https://raw.githubusercontent.com/gitlearnaman/iamamanraj-/main/IMG20240209203341.jpg" alt="Jojo">
+    </div>
+    <div id="speech">I am missing you Jojo ❤️</div>
+    <div id="message">I ❤️ You Jojo! Mui Mui Mui Mui 😘😘😘😘</div>
+  </div>
+
+  <!-- Background romantic music -->
+  <audio id="bgMusic" src="romantic.mp3" loop></audio>
+
+  <script>
+    const soso = document.getElementById('soso');
+    const jojo = document.getElementById('jojo');
+    const speech = document.getElementById('speech');
+    const message = document.getElementById('message');
+    const bgMusic = document.getElementById('bgMusic');
+
+    let muiCount = 0;
+
+    // Start music on first interaction due to browser policies
+    document.addEventListener('keydown', startMusicOnce, {once: true});
+    function startMusicOnce(){
+      bgMusic.play();
+    }
+
+    document.addEventListener('keydown', moveSoso);
+
+    function moveSoso(e) {
+      let left = parseInt(soso.style.left || 50);
+      let top = parseInt(soso.style.top || 50);
+
+      if(e.key === 'ArrowRight') left += 20;
+      if(e.key === 'ArrowLeft') left -= 20;
+      if(e.key === 'ArrowUp') top -= 20;
+      if(e.key === 'ArrowDown') top += 20;
+
+      // Keep within bounds
+      left = Math.max(0, Math.min(window.innerWidth - 60, left));
+      top = Math.max(0, Math.min(window.innerHeight - 60, top));
+
+      soso.style.left = left + 'px';
+      soso.style.top = top + 'px';
+
+      // Update speech
+      if(muiCount < 5){
+        speech.innerText = "I am missing you Jojo ❤️";
+        muiCount++;
+      } else {
+        speech.innerText = "Mui Mui Mui Mui 🥺";
+        muiCount = 0;
+      }
+
+      moveJojo();
+      checkCatch();
+    }
+
+    function moveJojo() {
+      let newLeft = Math.random() * (window.innerWidth - 60);
+      let newTop = Math.random() * (window.innerHeight - 60);
+      jojo.style.left = newLeft + 'px';
+      jojo.style.top = newTop + 'px';
+    }
+
+    function checkCatch() {
+      const sosoRect = soso.getBoundingClientRect();
+      const jojoRect = jojo.getBoundingClientRect();
+
+      if(!(sosoRect.right < jojoRect.left || 
+           sosoRect.left > jojoRect.right || 
+           sosoRect.bottom < jojoRect.top || 
+           sosoRect.top > jojoRect.bottom)) {
+        message.style.display = 'block';
+        speech.style.display = 'none';
+        document.removeEventListener('keydown', moveSoso);
+      }
+    }
+  </script>
+</body>
+</html>
